@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name &mdash; Writer &amp; Songwriter</title>
+<meta name="description" content="A personal collection of books, songs, and notes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#top" class="site-name" id="siteName">Your Name</a>
+    <nav class="site-nav">
+      <a href="#works">Works</a>
+      <a href="#right-now">Right Now</a>
+      <a href="#favorites">Favorites</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO — randomized book + quote -->
+  <section class="hero" id="hero">
+    <div class="container hero-inner">
+      <div class="hero-cover" id="heroCover" aria-hidden="true"></div>
+      <div class="hero-text">
+        <p class="hero-quote" id="heroQuote">&ldquo;&rdquo;</p>
+        <p class="hero-source">
+          <span id="heroBookTitle">&nbsp;</span>
+          <span class="hero-source-dot">&middot;</span>
+          <span id="heroBookYear">&nbsp;</span>
+        </p>
+        <button class="hero-reroll" id="heroReroll" type="button">Another page &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section class="section" id="works">
+    <div class="container">
+      <p class="eyebrow fade-up">Works</p>
+      <h2 class="section-title fade-up">Books, songs &amp; other stuff</h2>
+
+      <div class="books-grid" id="booksGrid"></div>
+
+      <div class="other-works-block fade-up">
+        <h3 class="songs-title">Andras verk</h3>
+        <div class="other-works-grid" id="otherWorksGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT NOW -->
+  <section class="section section-alt" id="right-now">
+    <div class="container container-narrow">
+      <p class="eyebrow fade-up">Right now</p>
+      <h2 class="section-title fade-up">A page in progress</h2>
+      <p class="section-lede fade-up">Whatever's on the desk, as it's written &mdash; not a blog, just the page as it stands.</p>
+
+      <ul class="notes-list" id="notesList"></ul>
+    </div>
+  </section>
+
+  <!-- FAVORITES -->
+  <section class="section" id="favorites">
+    <div class="container">
+      <p class="eyebrow fade-up">Favorites</p>
+      <h2 class="section-title fade-up">Noises &amp; places</h2>
+
+      <ul class="favorites-grid" id="favoritesGrid"></ul>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section section-alt" id="contact">
+    <div class="container container-narrow contact-inner">
+      <p class="eyebrow fade-up">Contact</p>
+      <h2 class="section-title fade-up">Say hello</h2>
+      <p class="section-lede fade-up">For events, press, or just to say a book found you at the right time.</p>
+
+      <form class="contact-form fade-up" id="contactForm">
+        <div class="form-row">
+          <label for="contactName">Name</label>
+          <input type="text" id="contactName" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="contactEmail">Your email</label>
+          <input type="email" id="contactEmail" name="email" required>
+        </div>
+        <div class="form-row">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn-send">Send</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span id="footerName">&copy; 2026 Your Name</span>
+    <a href="admin.html" class="footer-admin">Edit Right Now</a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

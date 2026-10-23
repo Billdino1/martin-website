@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Edit Right Now</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .admin-wrap { padding: 96px 0; max-width: 640px; margin: 0 auto; }
+  .admin-gate { text-align: center; padding: 96px 0; }
+  .admin-gate input { max-width: 280px; margin: 24px auto 0; display: block; }
+  .admin-note-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .admin-note-item .note-date { margin-bottom: 6px; }
+  .admin-note-actions { margin-top: 12px; }
+  .btn-delete {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .btn-delete:hover { border-color: var(--accent); color: var(--accent); }
+  .admin-warning {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--line);
+    margin-top: 48px;
+    padding-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="site-name" id="siteName">Your Name</a>
+    <nav class="site-nav"><a href="index.html">Back to site</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="admin-gate" id="gate">
+      <p class="eyebrow">Privat</p>
+      <h2 class="section-title">Ange lösenord</h2>
+      <input type="text" id="passInput" placeholder="lösenord" autocomplete="off" spellcheck="false">
+      <p id="gateError" style="color: var(--accent); font-size: 0.85rem; margin-top: 12px; display: none;">
+        Fel lösenord.
+      </p>
+    </div>
+
+    <div class="admin-wrap" id="editor" hidden>
+      <p class="eyebrow">Right now</p>
+      <h2 class="section-title">Lägg till ett inlägg</h2>
+
+      <form class="contact-form" id="noteForm">
+        <div class="form-row">
+          <label for="noteDate">Datum</label>
+          <input type="date" id="noteDate" required>
+        </div>
+        <div class="form-row">
+          <label for="noteText">Vad som är på gång</label>
+          <textarea id="noteText" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn-send">Publicera</button>
+      </form>
+
+      <h3 class="section-title" style="font-size: 1.3rem; margin-top: 56px;">Publicerade inlägg</h3>
+      <div id="savedNotes"></div>
+
+      <p class="admin-warning" id="configWarning" hidden>
+        Ingen Supabase-koppling är inställd än (js/config.js) — inlägg kan inte
+        sparas eller visas förrän SUPABASE_URL och SUPABASE_ANON_KEY är ifyllda.
+      </p>
+      <p class="admin-warning">
+        Lösenordet ovan är bara ett mjukt skydd — vem som helst som tittar i
+        sidans källkod kan läsa det. Byt PASSPHRASE nedan innan du delar
+        länken till den här sidan med någon annan.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script>
+  document.getElementById("siteName").textContent = SITE.name;
+
+  // Change this before using the page for real. This is a soft deterrent
+  // only — anyone who views source can read it — not real access control.
+  const PASSPHRASE = "Stukines123";
+
+  const gate = document.getElementById("gate");
+  const editor = document.getElementById("editor");
+  const passInput = document.getElementById("passInput");
+  const gateError = document.getElementById("gateError");
+
+  passInput.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    if (passInput.value === PASSPHRASE) {
+      gate.hidden = true;
+      editor.hidden = false;
+      renderSavedNotes();
+    } else {
+      gateError.style.display = "block";
+    }
+  });
+
+  document.getElementById("noteDate").valueAsDate = new Date();
+
+  async function renderSavedNotes() {
+    const container = document.getElementById("savedNotes");
+    const warning = document.getElementById("configWarning");
+
+    if (!supabaseClient) {
+      warning.hidden = false;
+      container.innerHTML = "";
+      return;
+    }
+    warning.hidden = true;
+
+    const { data: notes, error } = await supabaseClient
+      .from("notes")
+      .select("id, date, text")
+      .order("date", { ascending: false });
+
+    if (error) {
+      container.innerHTML = `<p style="color: var(--accent); font-size: 0.9rem;">Kunde inte hämta inlägg: ${error.message}</p>`;
+      return;
+    }
+    if (notes.length === 0) {
+      container.innerHTML = `<p style="color: var(--ink-faint); font-size: 0.9rem;">Inga inlägg publicerade än.</p>`;
+      return;
+    }
+
+    container.innerHTML = notes
+      .map(
+        (note) => `
+      <div class="admin-note-item">
+        <span class="note-date">${note.date}</span>
+        <p class="note-text">${note.text}</p>
+        <div class="admin-note-actions">
+          <button class="btn-delete" data-id="${note.id}">Ta bort</button>
+        </div>
+      </div>`
+      )
+      .join("");
+
+    container.querySelectorAll(".btn-delete").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await supabaseClient.from("notes").delete().eq("id", btn.dataset.id);
+        renderSavedNotes();
+      });
+    });
+  }
+
+  document.getElementById("noteForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!supabaseClient) return;
+    const date = document.getElementById("noteDate").value;
+    const text = document.getElementById("noteText").value.trim();
+    if (!text) return;
+
+    const { error } = await supabaseClient.from("notes").insert({ date, text });
+    if (error) {
+      alert("Kunde inte spara: " + error.message);
+      return;
+    }
+    document.getElementById("noteText").value = "";
+    renderSavedNotes();
+  });
+</script>
+</body>
+</html>
